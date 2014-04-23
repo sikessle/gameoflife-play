@@ -23,6 +23,7 @@ public class GridObserver implements Observer {
 		this.out = out;
 		mapper = new ObjectMapper();
 		grid.addObserver(this);
+		update(null, null);
 	}
 
 	@Override
