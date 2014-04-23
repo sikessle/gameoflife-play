@@ -3,6 +3,7 @@ package controllers;
 import org.sikessle.gameoflife.controller.impl.TextUIController;
 import org.sikessle.gameoflife.model.BaseModule;
 import org.sikessle.gameoflife.model.Grid;
+import org.sikessle.gameoflife.plugin.PluginModule;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -14,7 +15,8 @@ public class GameSingleton {
 	private static GameSingleton instance;
 
 	private GameSingleton() {
-		Injector injector = Guice.createInjector(new BaseModule());
+		Injector injector = Guice.createInjector(new BaseModule(),
+				new PluginModule());
 		grid = injector.getInstance(Grid.class);
 		ui = new TextUIController(grid);
 	}
