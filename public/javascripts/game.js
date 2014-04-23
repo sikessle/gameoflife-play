@@ -30,6 +30,8 @@ var GameOfLife = {
 	
 	draw: function(cells) {
 		if (cells.length != GameOfLife.rows || cells[0].length != GameOfLife.columns) {
+			GameOfLife.rows = cells.length;
+			GameOfLife.columns = cells[0].length;
 			GameOfLife.createDom(cells);
 			GameOfLife.attachDomListener();
 		}
@@ -38,6 +40,7 @@ var GameOfLife = {
 	
 	createDom: function(cells) {
 		GameOfLife.$grid.html('');
+		
 		for (var i = 0; i < cells.length; i++) {
 			var $row = GameOfLife.createRow(); 
 			for (var j = 0; j < cells.length; j++) {
@@ -59,11 +62,16 @@ var GameOfLife = {
 	},
 	
 	createRow: function() {
-		return $('<div class="row"></div>');
+		return $('<div></div>');
 	},
 	
 	createCell: function(row, column) {
-		return $('<div></div>').addClass('cell').attr('id', 'cell-' + row + '-' + column);
+		var size = GameOfLife.$grid.width() / GameOfLife.columns;
+		return $('<div></div>')
+			.addClass('cell')
+			.attr('id', 'cell-' + row + '-' + column)
+			.css('width', size)
+			.css('height', size);
 	},
 	
 	

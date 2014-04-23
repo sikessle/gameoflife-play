@@ -1,10 +1,12 @@
 @main("Game Of Life") {
 
-    <div id="controls">
-        <a href="#" onclick="GameOfLife.sendCommand('n', [15]); return false;">ANIMATE</a>
-    </div>
+    <section id="controls">
+        <a href="#" onclick="GameOfLife.sendCommand('n', [15]); return false;">Animieren</a>
+        <a href="#" onclick="GameOfLife.sendCommand('n', []); return false;">Einzelschritt</a>
+    </section>
 
-    <div id="grid">
+    <div class="container">
+	    <section id="grid"></section>
     </div>
 
 }
