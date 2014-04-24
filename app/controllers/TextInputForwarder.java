@@ -1,6 +1,6 @@
 package controllers;
 
-import org.sikessle.gameoflife.controller.impl.TextUIController;
+import org.sikessle.gameoflife.view.tui.TextView;
 
 import play.libs.F.Callback;
 import play.mvc.WebSocket;
@@ -9,9 +9,9 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 public class TextInputForwarder implements Callback<JsonNode> {
 
-	private final TextUIController ui;
+	private final TextView ui;
 
-	public TextInputForwarder(TextUIController ui, WebSocket.In<JsonNode> in) {
+	public TextInputForwarder(TextView ui, WebSocket.In<JsonNode> in) {
 		this.ui = ui;
 		in.onMessage(this);
 	}
@@ -20,7 +20,7 @@ public class TextInputForwarder implements Callback<JsonNode> {
 	public void invoke(JsonNode input) throws Throwable {
 		String command = parseJsonInput(input);
 		if (command != null) {
-			ui.readAndInterpret(command);
+			ui.readAndInterpretFromArgument(command);
 		}
 	}
 

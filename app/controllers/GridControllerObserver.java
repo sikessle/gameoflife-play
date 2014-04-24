@@ -3,7 +3,7 @@ package controllers;
 import java.util.Observable;
 import java.util.Observer;
 
-import org.sikessle.gameoflife.model.Grid;
+import org.sikessle.gameoflife.controller.GridController;
 
 import play.mvc.WebSocket;
 import play.mvc.WebSocket.Out;
@@ -12,31 +12,36 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 
-public class GridObserver implements Observer {
+public class GridControllerObserver implements Observer {
 
 	private final Out<JsonNode> out;
 	private final ObjectMapper mapper;
-	private final Grid grid;
+	private final GridController controller;
 
-	public GridObserver(Grid grid, WebSocket.Out<JsonNode> out) {
-		this.grid = grid;
+	public GridControllerObserver(GridController controller,
+			WebSocket.Out<JsonNode> out) {
+		this.controller = controller;
 		this.out = out;
 		mapper = new ObjectMapper();
-		grid.addObserver(this);
-		update(null, null);
+		controller.addObserver(this);
+		sendJsonToOut();
 	}
 
 	@Override
 	public void update(Observable o, Object arg) {
+		sendJsonToOut();
+	}
+
+	private void sendJsonToOut() {
 		ArrayNode gridJson = getGridJson();
 		out.write(gridJson);
 	}
 
 	private ArrayNode getGridJson() {
 		ArrayNode gridJson = mapper.createArrayNode();
-		boolean[][] cells = grid.getCells();
-		int rows = grid.getNumberOfRows();
-		int columns = grid.getNumberOfColumns();
+		boolean[][] cells = controller.getCells();
+		int rows = controller.getNumberOfRows();
+		int columns = controller.getNumberOfColumns();
 
 		for (int i = 0; i < rows; i++) {
 			ArrayNode rowJson = mapper.createArrayNode();

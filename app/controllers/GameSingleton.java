@@ -1,24 +1,24 @@
 package controllers;
 
-import org.sikessle.gameoflife.controller.impl.TextUIController;
-import org.sikessle.gameoflife.model.BaseModule;
-import org.sikessle.gameoflife.model.Grid;
-import org.sikessle.gameoflife.plugin.PluginModule;
+import org.sikessle.gameoflife.BaseModule;
+import org.sikessle.gameoflife.controller.GridController;
+import org.sikessle.gameoflife.persistence.dummy.DummyModule;
+import org.sikessle.gameoflife.view.tui.TextView;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
 public class GameSingleton {
 
-	private static TextUIController ui;
-	private static Grid grid;
+	private static TextView ui;
+	private static GridController controller;
 	private static GameSingleton instance;
 
 	private GameSingleton() {
 		Injector injector = Guice.createInjector(new BaseModule(),
-				new PluginModule());
-		grid = injector.getInstance(Grid.class);
-		ui = new TextUIController(grid);
+				new DummyModule());
+		GridController controller = injector.getInstance(GridController.class);
+		ui = new TextView(controller);
 	}
 
 	public static GameSingleton getInstance() {
@@ -28,12 +28,12 @@ public class GameSingleton {
 		return instance;
 	}
 
-	public TextUIController getUi() {
-		return ui;
+	public GridController getGridController() {
+		return controller;
 	}
 
-	public Grid getGrid() {
-		return grid;
+	public TextView getTextUI() {
+		return ui;
 	}
 
 }

@@ -18,7 +18,7 @@ public class Application extends Controller {
 	}
 
 	public static WebSocket<JsonNode> connectWebSocket() {
-		return new GameWebSocket(game.getUi(), game.getGrid());
+		return new GameWebSocket(game.getTextUI(), game.getGridController());
 	}
 
 }

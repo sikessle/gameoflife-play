@@ -1,7 +1,7 @@
 package controllers;
 
-import org.sikessle.gameoflife.controller.impl.TextUIController;
-import org.sikessle.gameoflife.model.Grid;
+import org.sikessle.gameoflife.controller.GridController;
+import org.sikessle.gameoflife.view.tui.TextView;
 
 import play.mvc.WebSocket;
 
@@ -9,17 +9,17 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 public class GameWebSocket extends WebSocket<JsonNode> {
 
-	private final TextUIController ui;
-	private final Grid grid;
+	private final TextView ui;
+	private final GridController controller;
 
-	public GameWebSocket(TextUIController ui, Grid grid) {
+	public GameWebSocket(TextView ui, GridController controller) {
 		this.ui = ui;
-		this.grid = grid;
+		this.controller = controller;
 	}
 
 	@Override
 	public void onReady(WebSocket.In<JsonNode> in, WebSocket.Out<JsonNode> out) {
-		new GridObserver(grid, out);
+		new GridControllerObserver(controller, out);
 		new TextInputForwarder(ui, in);
 	}
 
