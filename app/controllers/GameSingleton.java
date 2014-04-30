@@ -17,7 +17,7 @@ public class GameSingleton {
 	private GameSingleton() {
 		Injector injector = Guice.createInjector(new BaseModule(),
 				new DummyModule());
-		GridController controller = injector.getInstance(GridController.class);
+		controller = injector.getInstance(GridController.class);
 		ui = new TextView(controller);
 	}
 
