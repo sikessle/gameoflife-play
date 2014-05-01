@@ -9,19 +9,17 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 public class TextInputForwarder implements Callback<JsonNode> {
 
-	private final TextView ui;
+	private final TextView textUi;
 
-	public TextInputForwarder(TextView ui, WebSocket.In<JsonNode> in) {
-		this.ui = ui;
+	public TextInputForwarder(TextView textUi, WebSocket.In<JsonNode> in) {
+		this.textUi = textUi;
 		in.onMessage(this);
 	}
 
 	@Override
 	public void invoke(JsonNode input) throws Throwable {
 		String command = parseJsonInput(input);
-		if (command != null) {
-			ui.readAndInterpretFromArgument(command);
-		}
+		textUi.readAndInterpretFromArgument(command);
 	}
 
 	private String parseJsonInput(JsonNode input) {

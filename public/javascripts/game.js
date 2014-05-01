@@ -1,111 +1,208 @@
-var GameOfLife = {
+function Game() {
 	
-	socket: null,
-	$grid: null,
-	rows: 0,
-	columns: 0,
-		
-	init: function() {
-		this.$grid = $("#grid");
-		this.connectSocket();
-	},
+    var self = this;
+    
+	this.settings = {
+			socketUrl: 'ws://' + window.location.host + '/socket', 
+            socketTimeout: 1500,
+	};
+    
+    this.gridData = {
+        cells: [[]],
+        rows: 0,
+        columns: 0,
+    };
+    
+    this.$grid = $("#grid");
+    this.templateCell = $('#template-cell').html();
 	
-	connectSocket: function() {
-		var socketUrl = 'ws://' + window.location.host + '/socket';
-		this.socket = new WebSocket(socketUrl, ['json']);
-		
-		GameOfLife.socket.onclose = GameOfLife.socketOnClose;
-		GameOfLife.socket.onmessage = GameOfLife.socketOnMessage;
-	},
-	
-	socketOnClose: function(event) {
-		console.log("socket closed. reconnecting.")
-		GameOfLife.connectSocket();
-	},
-	
-	
-	socketOnMessage: function(message) {
-		GameOfLife.draw(JSON.parse(message.data));
-	},
-	
-	draw: function(cells) {
-		if (cells.length != GameOfLife.rows || cells[0].length != GameOfLife.columns) {
-			GameOfLife.rows = cells.length;
-			GameOfLife.columns = cells[0].length;
-			GameOfLife.createDom(cells);
-			GameOfLife.attachDomListener();
-		}
-		GameOfLife.drawCells(cells);
-	},
-	
-	createDom: function(cells) {
-		GameOfLife.$grid.html('');
-		
-		for (var i = 0; i < cells.length; i++) {
-			var $row = GameOfLife.createRow(); 
-			for (var j = 0; j < cells.length; j++) {
-				var $cell = GameOfLife.createCell(i, j);
-				$row.append($cell);
-			}
-			GameOfLife.$grid.append($row);
-		}
-	},
-	
-	attachDomListener: function() {
-		GameOfLife.$grid.find('.cell').click(function(event) {
-			var id = $(this).attr('id');
-			var parts = id.split('-');
-			var row = parts[1];
-			var column = parts[2];
-			GameOfLife.sendCommand('t', [row, column]);
-		});
-	},
-	
-	createRow: function() {
-		return $('<div></div>');
-	},
-	
-	createCell: function(row, column) {
-		var size = GameOfLife.$grid.width() / GameOfLife.columns;
-		return $('<div></div>')
-			.addClass('cell')
-			.attr('id', 'cell-' + row + '-' + column)
-			.css('width', size)
-			.css('height', size);
-	},
-	
-	
-	drawCells: function(cells) {
-		for (var i = 0; i < cells.length; i++) {
-			for (var j = 0; j < cells.length; j++) {
-				GameOfLife.drawCell(i, j, cells[i][j]);
-			}
-		}
-	},
-	
-	drawCell: function(row, column, isAlive) {
-		var $cell = $('#cell-' + row + '-' + column);
-		if (isAlive) {
-			$cell.addClass('alive');
-		} else {
-			$cell.removeClass('alive');
-		}
-	},
-
-	sendCommand: function(cmd, args) {
-		var completeCommand = cmd;
-		for (var i = 0; i < args.length; i++) {
-			completeCommand += ' ' + args[i];
-		}
-		var data = {
-				command: completeCommand
-		};
-		
-		GameOfLife.socket.send(JSON.stringify(data));
-	},
-		
+    // bootstrapping
+    this.tweakMouseEvent();
+    this.setupControls();
+	this.socket = new this.Socket(this.settings);
+    this.socket.channel.onmessage = function(msg) {
+        self.drawGrid(msg)
+    }
 };
 
+// utilites
+Game.prototype.tweakMouseEvent = function() {
+    var root = this;
+    var leftButtonDown;
+    
+    $(document).mousedown(function(e) {
+        if (e.which === 1) 
+            leftButtonDown = true;
+    });
+    $(document).mouseup(function(e) {
+        if (e.which === 1) 
+            leftButtonDown = false;
+    });
+    $(document).mousemove(function(e) {
+        if (e.which === 1 && !leftButtonDown) {
+            e.which = 0;
+        }
+    });
+};
+
+Game.prototype.setupControls = function() {
+    var root = this;
+    
+    // sliders
+    var options = {
+        min: 1,
+        max: 100,
+        step: 1,
+        value: 1,
+        tooltip: 'hide',
+    };
+    
+    var rowsOptions = $.extend({}, options);
+    rowsOptions.orientation = 'vertical';
+    
+    var columnsOptions = $.extend({}, options);
+    columnsOptions.orientation = 'horizontal';
+    
+    $('.slider-rows').slider(rowsOptions).on('slide', function(event) {
+        var rows = $(this).val();
+        var columns = root.gridData.columns;
+        root.socket.sendCommand('s', [rows, columns]);
+    });
+    
+    $('.slider-columns').slider(columnsOptions).on('slide', function(event) {
+        var rows = root.gridData.rows;
+        var columns = $(this).val();
+        root.socket.sendCommand('s', [rows, columns]);
+    });
+    
+    // buttons
+    $('.step-1').click(function() {
+       root.socket.sendCommand('n');
+    });
+};
+
+
+// Socket
+Game.prototype.Socket = function(settings) {
+    this.settings = settings;
+	this.connect();
+};
+
+Game.prototype.Socket.prototype.connect = function() {
+    this.channel = new WebSocket(this.settings.socketUrl, ['json']);
+    this.channel.onclose = function() {
+        console.log("socket closed. reconnecting in " + this.settings.socketTimeout + " ms");
+        setTimeout(this.connect, this.settings.socketTimeout);
+    };
+    this.channel.onopen = function() {
+        console.log('socket open');
+    };
+};
+
+Game.prototype.Socket.prototype.sendCommand = function(cmd, args) {
+	var completeCommand = cmd;
+    if (args == null) {
+        args = [];
+    }
+	for (var i = 0; i < args.length; i++) {
+		completeCommand += ' ' + args[i];
+	}
+	var data = {
+		command: completeCommand
+	};
+	
+	this.channel.send(JSON.stringify(data));
+};
+
+// Drawing grid
+Game.prototype.drawGrid = function(msg) {
+    this.gridData.cells = JSON.parse(msg.data);
+    if (this.isGridDimensionDifferent()) {
+        this.gridData.rows = this.gridData.cells.length;
+        this.gridData.columns = this.gridData.cells[0].length;
+        this.createGridDom();
+        this.bindEvents();
+    }
+    this.updateCells();
+};
+
+Game.prototype.isGridDimensionDifferent = function() {
+    return this.gridData.rows != this.gridData.cells.length 
+        || this.gridData.columns != this.gridData.cells[0].length;
+};
+
+Game.prototype.createGridDom = function() {
+    console.log('creating dom');
+    var cells = this.gridData.cells;
+    var rows = this.gridData.rows;
+    var columns = this.gridData.columns;
+    this.$grid.html('');
+
+    for (var i = 0; i < rows; i++) {
+        var $row = this.createRow();
+        for (var j = 0; j < columns; j++) {
+            var $cell = this.createCell(i, j);
+            $row.append($cell);
+        }
+        this.$grid.append($row);
+    }
+};
+
+Game.prototype.createRow = function() {
+    return $('<div></div>');
+};
+
+Game.prototype.createCell = function(row, column) {
+	var $cell = $(this.templateCell);
+	$cell.attr('id', 'cell-' + row + '-' + column);
+	
+	return $cell;
+};
+
+Game.prototype.bindEvents = function() {
+    var root = this;
+    var leftButtonDown;
+    
+    var toggleCell = function(event) {
+        if (event.which === 1) {
+    		var id = $(this).attr('id');
+    		var parts = id.split('-');
+    		var row = parts[1];
+    		var column = parts[2];
+    		root.socket.sendCommand('t', [row, column]);
+        }
+    };
+    
+	this.$grid.find('.cell').mousedown(toggleCell);
+    this.$grid.find('.cell').mouseenter(toggleCell);
+    
+};
+
+Game.prototype.updateCells = function() {
+    var cells = this.gridData.cells;
+    var rows = this.gridData.rows;
+    var columns = this.gridData.columns;
+    
+    for (var i = 0; i < rows; i++) {
+        for (var j = 0; j < columns; j++) {
+            this.updateCell(i, j, cells[i][j]);
+        }
+    }
+};
+
+Game.prototype.updateCell = function(row, column, isAlive) {
+    $cell = $('#cell-' + row + '-' + column);
+	if (isAlive) {
+		$cell.addClass('alive');
+	} else {
+		$cell.removeClass('alive');
+	}
+};
+
+
+
+
+
 $(document).ready(function() {
-	GameOfLife.init();
+	var game = new Game();
 });

@@ -1,12 +1,24 @@
 @main("Game Of Life") {
 
+    <div id="template-cell" class="template">
+        <div class="cell" id=""></div>
+    </div>
+    
     <section id="controls">
-        <a href="#" onclick="GameOfLife.sendCommand('n', [15]); return false;">Animieren</a>
-        <a href="#" onclick="GameOfLife.sendCommand('n', []); return false;">Einzelschritt</a>
+        <button type="button" class="btn btn-primary step-1">step 1 generation</button>
+        <!-- TODO: animate: play and pause (setTimeout + speed) -->
     </section>
 
     <div class="container">
-	    <section id="grid"></section>
-    </div>
+        <div class="row">
+            <div class="col-xs-1">
+                <input type="text" class="slider slider-rows">
+            </div>
+            <div class="col-xs-11">
+                <input type="text" class="slider slider-columns">
+	            <section id="grid"></section>
+	        </div>
+	    </div> <!-- .row -->
+    </div> <!-- .container -->
 
 }

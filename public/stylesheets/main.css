@@ -1,9 +1,14 @@
 body {
 }
 
+.template {
+	display: none;
+}
+
 #grid {
 	width: 100%;
 	height: 100%;
+    cursor: default;
 }
 
 #grid div {
@@ -12,10 +17,16 @@ body {
 
 .cell {
 	display: inline-block;
-	background: black;
-	border: 1px solid white;
+	border: 1px solid #151515;
+	width: 20px;
+	height: 20px;
+    background: black;
 }
 
 .cell.alive {
 	background: blue;
+}
+
+#controls {
+    margin-bottom: 20px;
 }
