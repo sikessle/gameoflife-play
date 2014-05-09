@@ -4,6 +4,7 @@ import org.sikessle.gameoflife.controller.GridController;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public final class GridControllerToJson {
 
@@ -14,8 +15,17 @@ public final class GridControllerToJson {
 		this.controller = controller;
 	}
 
-	public ArrayNode getGridAsJson() {
-		ArrayNode gridJson = mapper.createArrayNode();
+	public ObjectNode getGridAsJson() {
+		ObjectNode gridJson = mapper.createObjectNode();
+
+		appendCells(gridJson);
+		appendGenerationStrategy(gridJson);
+
+		return gridJson;
+	}
+
+	private void appendCells(ObjectNode gridJson) {
+		ArrayNode cellsJson = mapper.createArrayNode();
 		boolean[][] cells = controller.getCells();
 
 		for (int i = 0; i < controller.getNumberOfRows(); i++) {
@@ -23,10 +33,14 @@ public final class GridControllerToJson {
 			for (int j = 0; j < controller.getNumberOfColumns(); j++) {
 				rowJson.add(cells[i][j]);
 			}
-			gridJson.add(rowJson);
+			cellsJson.add(rowJson);
 		}
+		gridJson.put("cells", cellsJson);
+	}
 
-		return gridJson;
+	private void appendGenerationStrategy(ObjectNode gridJson) {
+		gridJson.put("generationStrategy",
+				controller.getGenerationStrategyName());
 	}
 
 	public ArrayNode getSavedGamesAsJson() {

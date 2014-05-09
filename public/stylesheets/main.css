@@ -24,7 +24,11 @@ body {
 }
 
 .cell.alive {
-	background: blue;
+	background: rgb(0, 176, 255);
+}
+
+.cell.spawn-hovered {
+	background: red;
 }
 
 #controls {

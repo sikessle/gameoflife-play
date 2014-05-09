@@ -68,25 +68,6 @@ var Game = (function () {
 
     /*
         The main game communication
-        settings:
-        {
-            debug: true,
-            socket: {
-                debug: true,
-                url: 'ws://' + window.location.host + '/socket',
-                timeout: 1500,
-                maxReconnectAttempts: 3
-            },
-            selectors: {
-                grid: '#grid',
-                cellTemplate: '#template-cell',
-                cell: '.cell',
-                sliderRows: '.slider-rows',
-                sliderColumns: '.slider-columns',
-                stepOneBtn: '.step-1'
-            },
-            cellAliveClass: 'alive'
-        }
     */
     function Game(settings) {
         this.settings = $.extend(true, {}, settings);
@@ -95,11 +76,13 @@ var Game = (function () {
         this.cells = [[]];
         this.rows = 0;
         this.columns = 0;
+        this.generationStrategy = '';
 
         var logger = new Logger(settings.debug);
         this.log = logger.log.bind(logger);
 
         this.$grid = $(this.settings.selectors.grid);
+        this.$status = $(this.settings.selectors.status);
         this.templateCell = $(this.settings.selectors.cellTemplate).html();
     }
 
@@ -163,8 +146,20 @@ var Game = (function () {
         });
 
         // buttons
+        $(this.settings.selectors.clear).click(function () {
+            game.sendCommand('c');
+        });
         $(this.settings.selectors.stepOneBtn).click(function () {
             game.sendCommand('n');
+        });
+        $(this.settings.selectors.stepNBtn).click(function () {
+            var steps = $(this).data('steps'),
+                speed = $(this).data('speed');
+            game.animate(steps, speed);
+        });
+        $(this.settings.selectors.figure).click(function () {
+            var figure = $(this).data('figure');
+            game.spawnFigure(figure);
         });
     };
 
@@ -184,14 +179,83 @@ var Game = (function () {
         });
     };
 
+    Game.prototype.spawnFigure = function (figure) {
+        var hoverClass = 'spawn-hovered',
+            $cells,
+            game = this;
+
+        this.setStatus('choose spawn point..');
+
+        $cells = this.$grid.find(this.settings.selectors.cell);
+
+        $cells.on('mouseenter.spawn', function () {
+            $(this).addClass(hoverClass);
+        });
+
+        $cells.on('mouseleave.spawn', function () {
+            $(this).removeClass(hoverClass);
+        });
+
+        $cells.on('click.spawn', function () {
+            var $cell = $(this),
+                rowColumn = game.getRowAndColumnFromId($cell.attr('id'));
+
+            $cells.off('.spawn');
+            $cell.removeClass(hoverClass);
+            game.setStatus('');
+            game.sendCommand('t', [rowColumn.row, rowColumn.column]);
+            game.sendCommand(figure, [rowColumn.row, rowColumn.column]);
+        });
+    };
+
+    Game.prototype.animate = function (steps, speed) {
+        var game = this,
+            frames = steps,
+            enqueueFrame,
+            singleStep;
+
+        enqueueFrame = function () {
+            setTimeout(function () {
+                singleStep();
+            }, speed);
+        };
+
+        singleStep = function () {
+            if (frames === 0) {
+                game.setStatus('');
+            } else {
+                frames -= 1;
+                game.setStatus('animation - frames left: ' + frames);
+                game.sendCommand('n');
+                enqueueFrame();
+            }
+        };
+
+        enqueueFrame();
+    };
+
+    Game.prototype.setStatus = function (status) {
+        this.$status.html(status);
+    };
+
     // Drawing grid
     Game.prototype.drawGrid = function (msg) {
-        this.cells = JSON.parse(msg.data);
+        var data;
+
+        data = JSON.parse(msg.data);
+        this.cells = data.cells;
+
+        if (this.generationStrategy !== data.generationStrategy) {
+            this.generationStrategy = data.generationStrategy;
+            $(this.settings.selectors.generationStrategy).html(this.generationStrategy);
+        }
+
         if (this.isGridDimensionDifferent()) {
             this.rows = this.cells.length;
             this.columns = this.cells[0].length;
             this.createGridDom();
         }
+
         this.updateCells();
     };
 
@@ -238,17 +302,23 @@ var Game = (function () {
 
         function toggleCell(event) {
             if (event.which === 1) {
-                var id = $(this).attr('id'),
-                    parts = id.split('-'),
-                    row = parts[1],
-                    column = parts[2];
+                var rowColumn = game.getRowAndColumnFromId($(this).attr('id'));
 
-                game.sendCommand('t', [row, column]);
+                game.sendCommand('t', [rowColumn.row, rowColumn.column]);
             }
         }
 
         this.$grid.on('mousedown', this.settings.selectors.cell, toggleCell);
         this.$grid.on('mouseenter', this.settings.selectors.cell, toggleCell);
+    };
+
+    Game.prototype.getRowAndColumnFromId = function (id) {
+        var parts = id.split('-');
+
+        return {
+            row: parts[1],
+            column: parts[2]
+        };
     };
 
     Game.prototype.updateCells = function () {
@@ -293,7 +363,12 @@ $(document).ready(function () {
             cell: '.cell',
             sliderRows: '.slider-rows',
             sliderColumns: '.slider-columns',
-            stepOneBtn: '.step-1'
+            clear: '.clear',
+            stepOneBtn: '.step-1',
+            stepNBtn: '.step-n',
+            status: '.status',
+            generationStrategy: '.world',
+            figure: '.spawn-figure'
         },
         cellAliveClass: 'alive'
     });

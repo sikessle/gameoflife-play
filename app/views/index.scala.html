@@ -3,21 +3,48 @@
     <div id="template-cell" class="template">
         <div class="cell" id=""></div>
     </div>
-    
+
+
     <section id="controls">
-        <button type="button" class="btn btn-primary step-1">step 1 generation</button>
-        <!-- TODO: animate: play and pause (setTimeout + speed) -->
+        <button type="button" class="btn btn-primary clear">
+            <span class="glyphicon glyphicon-remove"></span>
+        </button>
+        <button type="button" class="btn btn-primary step-1">
+            <span class="glyphicon glyphicon-play"></span>
+        </button>
+        <button type="button" class="btn btn-primary step-n" data-steps="50" data-speed="50">
+            <span class="glyphicon glyphicon-fast-forward"></span>
+        </button>
+        <button type="button" class="btn btn-primary spawn-figure" data-figure="g">
+            Glider
+        </button>
+        <button type="button" class="btn btn-primary spawn-figure" data-figure="rp">
+            r-Pentonimo
+        </button>
+        <button type="button" class="btn btn-primary spawn-figure" data-figure="lws">
+            Light-Weight-Spaceship
+        </button>
     </section>
 
     <div class="container">
         <div class="row">
+
             <div class="col-xs-1">
                 <input type="text" class="slider slider-rows">
             </div>
+
             <div class="col-xs-11">
+
                 <input type="text" class="slider slider-columns">
-	            <section id="grid"></section>
-	        </div>
+
+                <section id="grid"></section>
+
+                <section id="info">
+                    <span class="world"></span>.
+                    <span class="status"></span>
+                </section>
+
+	        </div> <!-- .col -->
 	    </div> <!-- .row -->
     </div> <!-- .container -->
 
