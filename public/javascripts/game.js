@@ -184,7 +184,7 @@ var Game = (function () {
             $cells,
             game = this;
 
-        this.setStatus('choose spawn point..');
+        this.setStatus('choose spawn point');
 
         $cells = this.$grid.find(this.settings.selectors.cell);
 

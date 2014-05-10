@@ -5,10 +5,20 @@ body {
 	display: none;
 }
 
+.slider {
+	position: absolute !important;
+}
+
+.slider.slider-vertical {
+	top: 30px;
+}
+
+.slider.slider-horizontal {
+	left: 50px;
+}
+
 #grid {
-	width: 100%;
-	height: 100%;
-    cursor: default;
+	margin: 30px;
 }
 
 #grid div {
@@ -31,6 +41,12 @@ body {
 	background: red;
 }
 
-#controls {
-    margin-bottom: 20px;
+.clear {
+	clear: both;
+}
+
+.status.navbar-text {
+	background: rgb(0, 175, 255);
+	padding: 0 5px;
+	color: #fff;
 }
