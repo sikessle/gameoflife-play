@@ -20,6 +20,7 @@ public final class GridControllerToJson {
 
 		appendCells(gridJson);
 		appendGenerationStrategy(gridJson);
+		appendNumberOfSteppedGenerations(gridJson);
 
 		return gridJson;
 	}
@@ -41,6 +42,11 @@ public final class GridControllerToJson {
 	private void appendGenerationStrategy(ObjectNode gridJson) {
 		gridJson.put("generationStrategy",
 				controller.getGenerationStrategyName());
+	}
+
+	private void appendNumberOfSteppedGenerations(ObjectNode gridJson) {
+		gridJson.put("numberOfSteppedGenerations",
+				controller.getNumberOfSteppedGenerations());
 	}
 
 	public ArrayNode getSavedGamesAsJson() {

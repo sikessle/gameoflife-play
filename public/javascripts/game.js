@@ -250,6 +250,8 @@ var Game = (function () {
             $(this.settings.selectors.generationStrategy).html(this.generationStrategy);
         }
 
+        $(this.settings.selectors.steppedGenerations).html(data.numberOfSteppedGenerations);
+
         if (this.isGridDimensionDifferent()) {
             this.rows = this.cells.length;
             this.columns = this.cells[0].length;
@@ -368,7 +370,8 @@ $(document).ready(function () {
             stepNBtn: '.step-n',
             status: '.status',
             generationStrategy: '.world',
-            figure: '.spawn-figure'
+            figure: '.spawn-figure',
+            steppedGenerations: '.stepped-generations'
         },
         cellAliveClass: 'alive'
     });

@@ -50,3 +50,7 @@ body {
 	padding: 0 5px;
 	color: #fff;
 }
+
+.stepped-generations {
+	cursor: help;
+}
