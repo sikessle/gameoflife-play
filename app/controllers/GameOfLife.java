@@ -8,24 +8,16 @@ import org.sikessle.gameoflife.view.tui.TextView;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
-public class GameSingleton {
+public class GameOfLife {
 
-	private static TextView ui;
-	private static GridController controller;
-	private static GameSingleton instance;
+	private final TextView ui;
+	private final GridController controller;
 
-	private GameSingleton() {
+	public GameOfLife() {
 		Injector injector = Guice.createInjector(new BaseModule(),
 				new DummyModule());
 		controller = injector.getInstance(GridController.class);
 		ui = new TextView(controller);
-	}
-
-	public static GameSingleton getInstance() {
-		if (instance == null) {
-			instance = new GameSingleton();
-		}
-		return instance;
 	}
 
 	public GridController getGridController() {

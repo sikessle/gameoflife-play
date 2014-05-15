@@ -8,29 +8,28 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public final class GridControllerToJson {
 
-	private static final ObjectMapper mapper = new ObjectMapper();
-	private final GridController controller;
+	private static final ObjectMapper MAPPER = new ObjectMapper();
 
-	public GridControllerToJson(GridController controller) {
-		this.controller = controller;
+	private GridControllerToJson() {
 	}
 
-	public ObjectNode getGridAsJson() {
-		ObjectNode gridJson = mapper.createObjectNode();
+	public static ObjectNode getGridAsJson(GridController controller) {
+		ObjectNode gridJson = MAPPER.createObjectNode();
 
-		appendCells(gridJson);
-		appendGenerationStrategy(gridJson);
-		appendNumberOfSteppedGenerations(gridJson);
+		appendCells(gridJson, controller);
+		appendGenerationStrategy(gridJson, controller);
+		appendNumberOfSteppedGenerations(gridJson, controller);
 
 		return gridJson;
 	}
 
-	private void appendCells(ObjectNode gridJson) {
-		ArrayNode cellsJson = mapper.createArrayNode();
+	private static void appendCells(ObjectNode gridJson,
+			GridController controller) {
+		ArrayNode cellsJson = MAPPER.createArrayNode();
 		boolean[][] cells = controller.getCells();
 
 		for (int i = 0; i < controller.getNumberOfRows(); i++) {
-			ArrayNode rowJson = mapper.createArrayNode();
+			ArrayNode rowJson = MAPPER.createArrayNode();
 			for (int j = 0; j < controller.getNumberOfColumns(); j++) {
 				rowJson.add(cells[i][j]);
 			}
@@ -39,18 +38,20 @@ public final class GridControllerToJson {
 		gridJson.put("cells", cellsJson);
 	}
 
-	private void appendGenerationStrategy(ObjectNode gridJson) {
+	private static void appendGenerationStrategy(ObjectNode gridJson,
+			GridController controller) {
 		gridJson.put("generationStrategy",
 				controller.getGenerationStrategyName());
 	}
 
-	private void appendNumberOfSteppedGenerations(ObjectNode gridJson) {
+	private static void appendNumberOfSteppedGenerations(ObjectNode gridJson,
+			GridController controller) {
 		gridJson.put("numberOfSteppedGenerations",
 				controller.getNumberOfSteppedGenerations());
 	}
 
-	public ArrayNode getSavedGamesAsJson() {
-		ArrayNode gamesJson = mapper.createArrayNode();
+	public static ArrayNode getSavedGamesAsJson(GridController controller) {
+		ArrayNode gamesJson = MAPPER.createArrayNode();
 		for (String game : controller.listGames()) {
 			gamesJson.add(game);
 		}

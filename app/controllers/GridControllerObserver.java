@@ -13,12 +13,12 @@ import com.fasterxml.jackson.databind.JsonNode;
 public class GridControllerObserver implements Observer {
 
 	private final Out<JsonNode> out;
-	private final GridControllerToJson controllerJson;
+	private final GridController controller;
 
 	public GridControllerObserver(GridController controller,
 			WebSocket.Out<JsonNode> out) {
 		this.out = out;
-		controllerJson = new GridControllerToJson(controller);
+		this.controller = controller;
 		controller.addObserver(this);
 		sendJsonToOut();
 	}
@@ -29,7 +29,7 @@ public class GridControllerObserver implements Observer {
 	}
 
 	private void sendJsonToOut() {
-		out.write(controllerJson.getGridAsJson());
+		out.write(GridControllerToJson.getGridAsJson(controller));
 	}
 
 }
