@@ -1,0 +1,26 @@
+@(gameId: String)
+
+@main("Game Of Life") {
+
+    <div id="template-cell" class="template">
+        <div class="cell" id="cell-0-0"></div>
+    </div>
+
+    <div class="container">
+        <div class="row">
+
+            <div class="col-xs-12">
+
+                <input type="text" class="slider slider-columns">
+
+                <input type="text" class="slider slider-rows">
+
+                <section id="grid" data-game-id="@gameId"></section>
+
+                <div class="clear"></div>
+
+	        </div> <!-- .col -->
+	    </div> <!-- .row -->
+    </div> <!-- .container -->
+
+}

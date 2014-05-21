@@ -1,21 +1,25 @@
-@main("Game Of Life") {
+@(gameIds: Set[String])
 
-    <div id="template-cell" class="template">
-        <div class="cell" id="cell-0-0"></div>
-    </div>
+@main("Game Of Life") {
 
     <div class="container">
         <div class="row">
 
             <div class="col-xs-12">
+            
+                <p>
+                    <strong><a href="@routes.Application.createGame()">Create new game</a></strong>
+                </p>
 
-                <input type="text" class="slider slider-columns">
-
-                <input type="text" class="slider slider-rows">
-
-                <section id="grid"></section>
-
-                <div class="clear"></div>
+                @if(gameIds.size() > 0) {
+	                <h4>Choose a game</h4>
+	                
+	                <ul>
+	                    @for(game <- gameIds) {
+	                        <li><a href="@routes.Application.playGame(game)">@game</a></li>
+	                    }
+	                </ul>
+                }
 
 	        </div> <!-- .col -->
 	    </div> <!-- .row -->

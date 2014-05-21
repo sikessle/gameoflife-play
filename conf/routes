@@ -2,17 +2,10 @@
 # This file defines all application routes (Higher priority routes first)
 # ~~~~
 
-GET     /                                   controllers.GameOfLifeController.index()
-GET     /socket                             controllers.GameOfLifeController.connectWebSocket()
-GET     /api/v1/grid                        controllers.GameOfLifeController.getGrid()
-PUT     /api/v1/grid/size/:rows/:columns    controllers.GameOfLifeController.setGridSize(rows: Integer, columns: Integer)
-PUT     /api/v1/grid/save/:name             controllers.GameOfLifeController.save(name: String)
-PUT     /api/v1/grid/step                   controllers.GameOfLifeController.stepOneGeneration()
-PUT     /api/v1/grid/clear                  controllers.GameOfLifeController.clearGrid()
-GET     /api/v1/grid/load                   controllers.GameOfLifeController.listGames()
-PUT     /api/v1/grid/load/:name             controllers.GameOfLifeController.load(name: String)
-PUT     /api/v1/cell/toggle/:row/:column    controllers.GameOfLifeController.toggleCell(row: Integer, column: Integer)
-
+GET     /                                   controllers.Application.index()
+GET     /game                               controllers.Application.createGame()
+GET     /games/:id                          controllers.Application.playGame(id: String)
+GET     /games/:id/socket                   controllers.Application.connectWebSocket(id: String)
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)

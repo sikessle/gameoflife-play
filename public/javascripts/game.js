@@ -351,11 +351,13 @@ var Game = (function () {
 $(document).ready(function () {
     'use strict';
 
+    var gameId = $('#grid').data('game-id');
+
     var game = new Game({
         debug: true,
         socket: {
             debug: true,
-            url: 'ws://' + window.location.host + '/socket',
+            url: 'ws://' + window.location.host + '/games/' + gameId + '/socket',
             timeout: 1500,
             maxReconnectAttempts: 3
         },
