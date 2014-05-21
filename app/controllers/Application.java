@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.sikessle.gameoflife.controller.GridController;
 import org.sikessle.gameoflife.view.tui.TextView;
@@ -20,7 +21,7 @@ import views.html.*;
 
 public class Application extends Controller {
 
-	private static Map<String, GameOfLife> gameCache = new HashMap<String, GameOfLife>();
+	private static Map<String, GameOfLife> gameCache = new ConcurrentHashMap<String, GameOfLife>();
 
 	public static Result index() {
 		Set<String> gameIds = gameCache.keySet();
