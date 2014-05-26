@@ -1,17 +1,12 @@
 package controllers;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.sikessle.gameoflife.controller.GridController;
-import org.sikessle.gameoflife.view.tui.TextView;
-
 import com.fasterxml.jackson.databind.JsonNode;
 
-import play.api.mvc.Session;
 import play.mvc.Controller;
 import play.mvc.Result;
 import play.mvc.WebSocket;
