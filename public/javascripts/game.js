@@ -47,7 +47,7 @@ var Highscore = (function () {
             type: 'POST',
             data: JSON.stringify(data),
             success: function () {
-                hs.$form.slideUp();
+                hs.$form.find('.response').html("highscore added");
             }
         });
     };

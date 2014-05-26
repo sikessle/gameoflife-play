@@ -65,7 +65,6 @@ public class Application extends Controller {
 	@BodyParser.Of(BodyParser.Json.class)
 	public static Result createHighscore() {
 		JsonNode data = request().body().asJson();
-		System.out.println(data);
 		WS.url(HIGHSCORE_SERVER).post(data);
 		return ok();
 	}
