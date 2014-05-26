@@ -1,4 +1,4 @@
-@(title: String)(content: Html)
+@(title: String, isGame: Boolean)(content: Html)
 <!doctype html>
 <html>
     <head>
@@ -26,6 +26,19 @@
                 </div>
                 <div class="collapse navbar-collapse" id="navbar-collapse">
 
+                    @if(!isGame) {
+                    <div class="btn-group">
+
+                        <a href="@routes.Application.createGame()">
+	                        <button type="button" class="btn btn-default navbar-btn">
+	                            <span class="glyphicon glyphicon-plus"></span> Create Game
+	                        </button>
+                        </a>
+
+                    </div>
+                    }
+                    
+                    @if(isGame) {
                     <div class="btn-group">
 
                         <button type="button" class="btn btn-default navbar-btn clear">
@@ -71,6 +84,8 @@
                         <div class="stepped-generations navbar-text" title="number of generations"></div>
                         <div class="world navbar-text"></div>
                     </div>
+                    
+                    }
 
                 </div>
             </div>
@@ -106,6 +121,9 @@
         <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
         <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
         <script src="@routes.Assets.at("javascripts/bootstrap-slider.js")"></script>
+        @if(isGame) {
+            <script src="@routes.Assets.at("javascripts/gameoflife.js")"></script>
+        }
 
         @content
 

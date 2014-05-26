@@ -1,16 +1,12 @@
 @(gameIds: Set[String])
 
-@main("Game Of Life") {
+@main("Game Of Life", false) {
 
     <div class="container">
         <div class="row">
 
             <div class="col-xs-12">
             
-                <p>
-                    <strong><a href="@routes.Application.createGame()">Create new game</a></strong>
-                </p>
-
                 @if(gameIds.size() > 0) {
 	                <h4>Choose a game</h4>
 	                
