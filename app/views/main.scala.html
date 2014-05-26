@@ -27,58 +27,59 @@
                 <div class="collapse navbar-collapse" id="navbar-collapse">
 
                     @if(!isGame) {
-                    <div class="btn-group">
-
-                        <a href="@routes.Application.createGame()">
-	                        <button type="button" class="btn btn-default navbar-btn">
-	                            <span class="glyphicon glyphicon-plus"></span> Create Game
-	                        </button>
-                        </a>
-
-                    </div>
+                    <div class="navbar-left">
+	                    <div class="btn-group">
+	                        <a href="@routes.Application.createGame()">
+		                        <button type="button" class="btn btn-default navbar-btn">
+		                            <span class="glyphicon glyphicon-plus"></span> Create Game
+		                        </button>
+	                        </a>
+	                    </div>
+	                </div>
                     }
                     
                     @if(isGame) {
-                    <div class="btn-group">
-
-                        <button type="button" class="btn btn-default navbar-btn clear">
-                            <span class="glyphicon glyphicon-remove"></span>
-                        </button>
-                        <button type="button" class="btn btn-default navbar-btn step-1">
-                            <span class="glyphicon glyphicon-play"></span>
-                        </button>
-                        <button type="button" class="btn btn-default navbar-btn step-n"
-                                data-steps="50" data-speed="50">
-                            <span class="glyphicon glyphicon-fast-forward"></span>
-                        </button>
-
-                    </div>
-
-                    <div class="btn-group">
-
-                        <button type="button" class="btn btn-primary navbar-btn spawn-figure" data-figure="g">
-                            Glider
-                        </button>
-                        <button type="button" class="btn btn-primary navbar-btn spawn-figure" data-figure="rp">
-                            r-Pentonimo
-                        </button>
-                        <button type="button" class="btn btn-primary navbar-btn spawn-figure" data-figure="lws">
-                            Light-Weight-Spaceship
-                        </button>
-
-                    </div>
-
-
-
-                    <div class="btn-group">
-
-                        <button type="button" class="btn btn-default navbar-btn submit-highscore"
-                            data-toggle="modal" data-target=".highscore-modal">
-                            Submit score
-                        </button>
-
-                    </div>
-
+                    <div class="navbar-left">
+	                    <div class="btn-group">
+	
+	                        <button type="button" class="btn btn-default navbar-btn clear">
+	                            <span class="glyphicon glyphicon-remove"></span>
+	                        </button>
+	                        <button type="button" class="btn btn-default navbar-btn step-1">
+	                            <span class="glyphicon glyphicon-play"></span>
+	                        </button>
+	                        <button type="button" class="btn btn-default navbar-btn step-n"
+	                                data-steps="50" data-speed="50">
+	                            <span class="glyphicon glyphicon-fast-forward"></span>
+	                        </button>
+	
+	                    </div>
+	
+	                    <div class="btn-group">
+	
+	                        <button type="button" class="btn btn-primary navbar-btn spawn-figure" data-figure="g">
+	                            Glider
+	                        </button>
+	                        <button type="button" class="btn btn-primary navbar-btn spawn-figure" data-figure="rp">
+	                            r-Pentonimo
+	                        </button>
+	                        <button type="button" class="btn btn-primary navbar-btn spawn-figure" data-figure="lws">
+	                            Light-Weight-Spaceship
+	                        </button>
+	
+	                    </div>
+	
+	                    <div class="btn-group">
+	
+	                        <button type="button" class="btn btn-default navbar-btn submit-highscore"
+	                            data-toggle="modal" data-target=".highscore-modal">
+	                            Submit score
+	                        </button>
+	
+	                    </div>
+                    
+                    </div> <!-- .navbar-left -->
+                    
                     <div class="navbar-right">
                         <div class="status navbar-text"></div>
                         <div class="stepped-generations navbar-text" title="number of generations"></div>
