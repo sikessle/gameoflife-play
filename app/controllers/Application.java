@@ -7,15 +7,18 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
+import play.libs.WS;
 import play.mvc.Controller;
 import play.mvc.Result;
 import play.mvc.WebSocket;
 import play.*;
 import play.mvc.*;
 import views.html.*;
+import views.html.defaultpages.error;
 
 public class Application extends Controller {
 
+	private static final String HIGHSCORE_SERVER = "http://de-htwg-sa-highscores.herokuapp.com";
 	private static Map<String, GameOfLife> gameCache = new ConcurrentHashMap<String, GameOfLife>();
 
 	public static Result index() {
@@ -57,6 +60,14 @@ public class Application extends Controller {
 
 	private static boolean gameNotExists(String gameId) {
 		return !gameCache.containsKey(gameId);
+	}
+
+	@BodyParser.Of(BodyParser.Json.class)
+	public static Result createHighscore() {
+		JsonNode data = request().body().asJson();
+		System.out.println(data);
+		WS.url(HIGHSCORE_SERVER).post(data);
+		return ok();
 	}
 
 }

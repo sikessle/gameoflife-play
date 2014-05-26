@@ -1,6 +1,61 @@
 /*jslint browser: true*/
 /*global $, jQuery, WebSocket, console*/
 
+var Highscore = (function () {
+    'use strict';
+
+    /*
+        A highscore plugin
+    */
+    function Highscore(settings) {
+        this.settings = $.extend({}, settings);
+        this.$form = $(this.settings.selector).find('form');
+    }
+
+    Highscore.prototype.enable = function () {
+        this.addEventListener();
+    };
+
+    Highscore.prototype.addEventListener = function () {
+        var hs = this;
+
+        this.$form.submit(function (e) {
+            e.preventDefault();
+
+            var player, score;
+
+            player = $(this).find('input[name="player"]').val();
+            score = $(hs.settings.generationsSelector).html();
+
+            hs.submitHighscore(player, score);
+        });
+    };
+
+    Highscore.prototype.submitHighscore = function (playerName, highscore) {
+        var data, hs;
+
+        hs = this;
+
+        data = {
+            game: this.settings.gameName,
+            player: playerName,
+            score: highscore
+        };
+
+        $.ajax(this.settings.url, {
+            contentType: 'application/json',
+            type: 'POST',
+            data: JSON.stringify(data),
+            success: function () {
+                hs.$form.slideUp();
+            }
+        });
+    };
+
+    return Highscore;
+
+}());
+
 var Game = (function () {
     'use strict';
 
@@ -87,6 +142,10 @@ var Game = (function () {
     }
 
     Game.prototype.start = function () {
+        // no grid found
+        if (this.$grid.length === 0) {
+            return;
+        };
         this.tweakMouseEvent();
         this.setupControls();
         this.bindGridEvents();
@@ -351,9 +410,11 @@ var Game = (function () {
 $(document).ready(function () {
     'use strict';
 
-    var gameId = $('#grid').data('game-id');
+    var gameId, game, highscore;
 
-    var game = new Game({
+    gameId = $('#grid').data('game-id');
+
+    game = new Game({
         debug: true,
         socket: {
             debug: true,
@@ -379,4 +440,13 @@ $(document).ready(function () {
     });
 
     game.start();
+
+    highscore = new Highscore({
+        url: '/highscore',
+        generationsSelector: '.stepped-generations',
+        selector: '#highscore',
+        gameName: 'Game of Life'
+    });
+
+    highscore.enable();
 });

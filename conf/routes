@@ -6,6 +6,7 @@ GET     /                                   controllers.Application.index()
 GET     /game                               controllers.Application.createGame()
 GET     /games/:id                          controllers.Application.playGame(id: String)
 GET     /games/:id/socket                   controllers.Application.connectWebSocket(id: String)
+POST    /highscore                          controllers.Application.createHighscore()
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)
