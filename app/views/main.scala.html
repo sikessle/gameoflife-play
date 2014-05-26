@@ -76,7 +76,8 @@
             </div>
         </nav>
 
-        <div class="modal fade highscore-modal" id="highscore" tabindex="-1" role="dialog" aria-labelledby="highscoreModel" aria-hidden="true">
+        <div class="modal fade highscore-modal" id="highscore" tabindex="-1" 
+                role="dialog" aria-labelledby="highscoreModel" aria-hidden="true">
             <div class="modal-dialog modal-sm">
                 <div class="modal-content">
 
@@ -86,23 +87,27 @@
                     </div> <!-- .modal-header -->
 
                     <div class="modal-body">
-                        <form method="post" action="">
-                            <p><input type="text" name="player" placeholder="Player name"></p>
-                            <p><input type="submit" value="submit highscore"></p>
+                        <form method="post" action="" role="form">
+                            <div class="form-group">
+                                <input type="text" class="form-control" name="player" placeholder="your name">
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary">submit highscore</button>
 
-                            <p class="response"></p>
+                            <div class="form-group">
+                                <p class="response"></p>
+                            </div>
                         </form>
                     </div> <!-- .modal-body -->
                 </div> <!-- .modal-content -->
             </div> <!-- .modal-dialog -->
         </div>
-
-        @content
-
+        
         <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
         <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
         <script src="@routes.Assets.at("javascripts/bootstrap-slider.js")"></script>
-        <script src="@routes.Assets.at("javascripts/game.js")"></script>
+
+        @content
 
     </body>
 </html>

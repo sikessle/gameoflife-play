@@ -142,10 +142,6 @@ var Game = (function () {
     }
 
     Game.prototype.start = function () {
-        // no grid found
-        if (this.$grid.length === 0) {
-            return;
-        };
         this.tweakMouseEvent();
         this.setupControls();
         this.bindGridEvents();
