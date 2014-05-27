@@ -411,9 +411,9 @@ $(document).ready(function () {
     gameId = $('#grid').data('game-id');
 
     game = new Game({
-        debug: true,
+        debug: false,
         socket: {
-            debug: true,
+            debug: false,
             url: 'ws://' + window.location.host + '/games/' + gameId + '/socket',
             timeout: 1500,
             maxReconnectAttempts: 3
@@ -438,7 +438,7 @@ $(document).ready(function () {
     game.start();
 
     highscore = new Highscore({
-        url: '/highscore',
+        url: '/highscores',
         generationsSelector: '.stepped-generations',
         selector: '#highscore',
         gameName: 'Game of Life'

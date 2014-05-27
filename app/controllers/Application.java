@@ -6,7 +6,10 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
+import play.libs.Json;
 import play.libs.WS;
 import play.mvc.Controller;
 import play.mvc.Result;
@@ -19,6 +22,7 @@ import views.html.defaultpages.error;
 public class Application extends Controller {
 
 	private static final String HIGHSCORE_SERVER = "http://de-htwg-sa-highscores.herokuapp.com";
+	private static final ObjectMapper mapper = new ObjectMapper();
 	private static Map<String, GameOfLife> gameCache = new ConcurrentHashMap<String, GameOfLife>();
 
 	public static Result index() {
@@ -28,8 +32,12 @@ public class Application extends Controller {
 
 	public static Result createGame() {
 		String gameId = createGameInCache();
+		ObjectNode result = mapper.createObjectNode();
+		String gameUrl = routes.Application.playGame(gameId).absoluteURL(
+				request());
+		result.put("gameUrl", gameUrl);
 
-		return redirect(controllers.routes.Application.playGame(gameId));
+		return ok(result);
 	}
 
 	private static String createGameInCache() {

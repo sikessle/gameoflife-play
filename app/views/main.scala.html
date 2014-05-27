@@ -29,7 +29,7 @@
                     @if(!isGame) {
                     <div class="navbar-left">
 	                    <div class="btn-group">
-	                        <a href="@routes.Application.createGame()">
+	                        <a href="@routes.Application.createGame()" class="create-game">
 		                        <button type="button" class="btn btn-default navbar-btn">
 		                            <span class="glyphicon glyphicon-plus"></span> Create Game
 		                        </button>
@@ -125,6 +125,8 @@
         @if(isGame) {
             <script src="@routes.Assets.at("javascripts/gameoflife.js")"></script>
         }
+        <script src="@routes.Assets.at("javascripts/global.js")"></script>
+        
 
         @content
 
