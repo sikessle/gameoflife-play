@@ -20,13 +20,13 @@ import com.google.inject.Injector;
 import controllers.message.ParseCommandMessage;
 import controllers.message.WebSocketOutReadyMessage;
 
-public class GameOfLife extends UntypedActor implements Observer {
+public class GameOfLifeActor extends UntypedActor implements Observer {
 
 	private final TextView ui;
 	private final GridController controller;
 	private final List<Out<JsonNode>> outSockets;
 
-	public GameOfLife() {
+	public GameOfLifeActor() {
 		Injector injector = Guice.createInjector(new BaseModule(),
 				new DummyModule());
 		controller = injector.getInstance(GridController.class);

@@ -26,6 +26,8 @@ public class Application extends Controller {
 	private static final ActorSystem actorSystem = ActorSystem
 			.create("GameOfLife");
 	private static final ObjectMapper mapper = new ObjectMapper();
+	// TOOD this cache should be cleaned if no more websockets are listening to
+	// a game and the actor should quit.
 	private static Map<String, ActorRef> gameActorCache = new ConcurrentHashMap<String, ActorRef>();
 
 	public static Result index() {
@@ -47,7 +49,7 @@ public class Application extends Controller {
 		UUID uuid = UUID.randomUUID();
 		final String gameId = uuid.toString();
 
-		ActorRef gameRef = actorSystem.actorOf(Props.create(GameOfLife.class));
+		ActorRef gameRef = actorSystem.actorOf(Props.create(GameOfLifeActor.class));
 		gameActorCache.put(gameId, gameRef);
 
 		return gameId;
