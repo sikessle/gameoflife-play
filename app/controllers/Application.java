@@ -5,33 +5,36 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
+import play.libs.WS;
+import play.mvc.BodyParser;
+import play.mvc.Controller;
+import play.mvc.Result;
+import play.mvc.WebSocket;
+import views.html.game;
+import views.html.index;
+import akka.actor.ActorRef;
+import akka.actor.ActorSystem;
+import akka.actor.Props;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import play.libs.Json;
-import play.libs.WS;
-import play.mvc.Controller;
-import play.mvc.Result;
-import play.mvc.WebSocket;
-import play.*;
-import play.mvc.*;
-import views.html.*;
-import views.html.defaultpages.error;
-
 public class Application extends Controller {
 
 	private static final String HIGHSCORE_SERVER = "http://de-htwg-sa-highscores.herokuapp.com";
+	private static final ActorSystem actorSystem = ActorSystem
+			.create("GameOfLife");
 	private static final ObjectMapper mapper = new ObjectMapper();
-	private static Map<String, GameOfLife> gameCache = new ConcurrentHashMap<String, GameOfLife>();
+	private static Map<String, ActorRef> gameActorCache = new ConcurrentHashMap<String, ActorRef>();
 
 	public static Result index() {
-		Set<String> gameIds = gameCache.keySet();
+		Set<String> gameIds = gameActorCache.keySet();
 		return ok(index.render(gameIds));
 	}
 
 	public static Result createGame() {
-		String gameId = createGameInCache();
+		String gameId = createGameActorInCache();
 		ObjectNode result = mapper.createObjectNode();
 		String gameUrl = routes.Application.playGame(gameId).absoluteURL(
 				request());
@@ -40,12 +43,12 @@ public class Application extends Controller {
 		return ok(result);
 	}
 
-	private static String createGameInCache() {
+	private static String createGameActorInCache() {
 		UUID uuid = UUID.randomUUID();
-		String gameId = uuid.toString();
+		final String gameId = uuid.toString();
 
-		GameOfLife game = new GameOfLife();
-		gameCache.put(gameId, game);
+		ActorRef gameRef = actorSystem.actorOf(Props.create(GameOfLife.class));
+		gameActorCache.put(gameId, gameRef);
 
 		return gameId;
 	}
@@ -62,12 +65,12 @@ public class Application extends Controller {
 			return null;
 		}
 
-		GameOfLife game = gameCache.get(gameId);
-		return new GameWebSocket(game.getTextUI(), game.getGridController());
+		ActorRef gameRef = gameActorCache.get(gameId);
+		return new GameWebSocket(gameRef);
 	}
 
 	private static boolean gameNotExists(String gameId) {
-		return !gameCache.containsKey(gameId);
+		return !gameActorCache.containsKey(gameId);
 	}
 
 	@BodyParser.Of(BodyParser.Json.class)

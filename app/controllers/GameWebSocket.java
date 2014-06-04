@@ -1,26 +1,35 @@
 package controllers;
 
-import org.sikessle.gameoflife.controller.GridController;
-import org.sikessle.gameoflife.view.tui.TextView;
-
+import play.libs.F.Callback;
 import play.mvc.WebSocket;
+import akka.actor.ActorRef;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
+import controllers.message.ParseCommandMessage;
+import controllers.message.WebSocketOutReadyMessage;
+
 public class GameWebSocket extends WebSocket<JsonNode> {
 
-	private final TextView textUi;
-	private final GridController controller;
+	private final ActorRef gameRef;
 
-	public GameWebSocket(TextView textUi, GridController controller) {
-		this.textUi = textUi;
-		this.controller = controller;
+	public GameWebSocket(ActorRef gameRef) {
+		this.gameRef = gameRef;
 	}
 
 	@Override
 	public void onReady(WebSocket.In<JsonNode> in, WebSocket.Out<JsonNode> out) {
-		new GridControllerObserver(controller, out);
-		new TextInputForwarder(textUi, in);
+		in.onMessage(new HandleInputCallback());
+		gameRef.tell(new WebSocketOutReadyMessage(out), ActorRef.noSender());
+	}
+
+	private class HandleInputCallback implements Callback<JsonNode> {
+
+		@Override
+		public void invoke(JsonNode input) throws Throwable {
+			gameRef.tell(new ParseCommandMessage(input), ActorRef.noSender());
+		}
+
 	}
 
 }
