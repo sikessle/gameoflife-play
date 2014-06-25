@@ -8,7 +8,6 @@ import java.util.Observer;
 import org.sikessle.gameoflife.BaseModule;
 import org.sikessle.gameoflife.controller.GridController;
 import org.sikessle.gameoflife.persistence.dummy.DummyModule;
-import org.sikessle.gameoflife.view.gui.SwingView;
 import org.sikessle.gameoflife.view.tui.TextView;
 
 import play.mvc.WebSocket.Out;
@@ -31,7 +30,6 @@ public class GameOfLifeActor extends UntypedActor implements Observer {
 		Injector injector = Guice.createInjector(new BaseModule(),
 				new DummyModule());
 		controller = injector.getInstance(GridController.class);
-		new SwingView(controller);
 		ui = new TextView(controller);
 		outSockets = new LinkedList<Out<JsonNode>>();
 	}
